@@ -1,3 +1,7 @@
+import Dependencies.forceGuava
+import Dependencies.forceHapiVersion
+import Dependencies.forceJacksonVersion
+
 import codegen.GenerateSearchParamsTask
 import java.net.URL
 
@@ -7,7 +11,7 @@ plugins {
   id(Plugins.BuildPlugins.kotlinKapt)
   id(Plugins.BuildPlugins.mavenPublish)
   jacoco
-  id(Plugins.BuildPlugins.dokka).version(Plugins.Versions.dokka)
+  //id(Plugins.BuildPlugins.dokka).version(Plugins.Versions.dokka)
 }
 
 publishArtifact(Releases.Engine)
@@ -84,6 +88,10 @@ configurations {
     exclude(module = "jakarta.activation-api")
     exclude(module = "javax.activation")
     exclude(module = "jakarta.xml.bind-api")
+
+    forceGuava()
+    forceHapiVersion()
+    forceJacksonVersion()
   }
 }
 
@@ -112,7 +120,10 @@ dependencies {
   implementation(Dependencies.Retrofit.coreRetrofit)
   implementation(Dependencies.Room.ktx)
   implementation(Dependencies.Room.runtime)
-  implementation(Dependencies.androidFhirCommon)
+
+  implementation(project(":common"))
+  //implementation(Dependencies.androidFhirCommon)
+
   implementation(Dependencies.guava)
   implementation(Dependencies.httpInterceptor)
   implementation(Dependencies.jsonToolsPatch)
@@ -134,6 +145,7 @@ dependencies {
   testImplementation(Dependencies.truth)
 }
 
+/*
 tasks.dokkaHtml.configure {
   outputDirectory.set(file("../docs/${Releases.Engine.artifactId}/${Releases.Engine.version}"))
   suppressInheritedMembers.set(true)
@@ -158,3 +170,4 @@ tasks.dokkaHtml.configure {
     }
   }
 }
+*/

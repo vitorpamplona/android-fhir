@@ -16,20 +16,27 @@
 
 package com.google.android.fhir.workflow
 
-import ca.uhn.fhir.rest.gclient.UriClientParam
+import ca.uhn.fhir.context.FhirContext
+import ca.uhn.fhir.model.api.IQueryParameterType
+import ca.uhn.fhir.rest.param.StringParam
+import ca.uhn.fhir.rest.param.UriParam
+import ca.uhn.fhir.util.BundleBuilder
 import com.google.android.fhir.FhirEngine
 import com.google.android.fhir.db.ResourceNotFoundException
 import com.google.android.fhir.getResourceType
 import com.google.android.fhir.knowledge.KnowledgeManager
+import com.google.android.fhir.search.Operation
 import com.google.android.fhir.search.Search
+import org.cqframework.fhir.api.FhirDal
+import org.hl7.fhir.instance.model.api.IBaseBundle
 import org.hl7.fhir.instance.model.api.IBaseResource
 import org.hl7.fhir.instance.model.api.IIdType
 import org.hl7.fhir.r4.model.Resource
 import org.hl7.fhir.r4.model.ResourceType
-import org.opencds.cqf.cql.evaluator.fhir.dal.FhirDal
 import timber.log.Timber
 
 internal class FhirEngineDal(
+  private val fhirContext: FhirContext,
   private val fhirEngine: FhirEngine,
   private val knowledgeManager: KnowledgeManager,
 ) : FhirDal {
@@ -73,18 +80,52 @@ internal class FhirEngineDal(
     fhirEngine.delete(getResourceType(clazz), id.idPart)
   }
 
-  override fun search(resourceType: String): Iterable<IBaseResource> =
+  override fun search(
+    resourceType: String?,
+    searchParameters: MutableMap<String, MutableList<MutableList<IQueryParameterType>>>?,
+  ): IBaseBundle {
+    return runBlockingOrThrowMainThreadException {
+      val builder = BundleBuilder(fhirContext)
+      builder.setType("searchset")
+
+      if (resourceType != null) {
+        if (searchParameters == null) {
+          search(resourceType).forEach(builder::addCollectionEntry)
+        } else if (searchParameters.size == 1 && searchParameters.containsKey("url")) {
+          // first AND then OR
+          val search = Search(type = ResourceType.fromCode(resourceType))
+
+          searchParameters.forEach { param ->
+            if (param.key.equals("url", true)) {
+              // special case
+              param.value.forEach {
+                it.forEach {
+                  ((it as? UriParam)?.value ?: (it as? StringParam)?.value)?.let { url ->
+                    knowledgeManager
+                      .loadResources(resourceType = resourceType, url = url)
+                      .forEach(builder::addCollectionEntry)
+                  }
+                }
+              }
+            } else {
+              param.value.forEach {
+                it.forEach { search.applyFilterParam(param.key, it, Operation.OR) }
+              }
+            }
+          }
+
+          fhirEngine.search<Resource>(search).forEach(builder::addCollectionEntry)
+        }
+      }
+
+      builder.bundle
+    }
+  }
+
+  fun search(resourceType: String): Iterable<IBaseResource> =
     runBlockingOrThrowMainThreadException {
       val search = Search(type = ResourceType.fromCode(resourceType))
       knowledgeManager.loadResources(resourceType = resourceType) + fhirEngine.search(search)
-    }
-
-  override fun searchByUrl(resourceType: String, url: String): Iterable<IBaseResource> =
-    runBlockingOrThrowMainThreadException {
-      val search = Search(type = ResourceType.fromCode(resourceType))
-      search.filter(UriClientParam("url"), { value = url })
-      // Searching for knowledge artifact, no need to lookup for fhirEngine
-      knowledgeManager.loadResources(resourceType = resourceType, url = url)
     }
 
   @Suppress("UNCHECKED_CAST")

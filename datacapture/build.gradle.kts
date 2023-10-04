@@ -1,3 +1,4 @@
+import Dependencies.forceGuava
 import java.net.URL
 
 plugins {
@@ -5,7 +6,7 @@ plugins {
   id(Plugins.BuildPlugins.kotlinAndroid)
   id(Plugins.BuildPlugins.mavenPublish)
   jacoco
-  id(Plugins.BuildPlugins.dokka).version(Plugins.Versions.dokka)
+  //id(Plugins.BuildPlugins.dokka).version(Plugins.Versions.dokka)
 }
 
 publishArtifact(Releases.DataCapture)
@@ -52,7 +53,12 @@ android {
 
 afterEvaluate { configureFirebaseTestLabForLibraries() }
 
-configurations { all { exclude(module = "xpp3") } }
+configurations {
+  all {
+    exclude(module = "xpp3")
+    forceGuava()
+  }
+}
 
 dependencies {
   androidTestImplementation(Dependencies.AndroidxTest.core)
@@ -71,7 +77,9 @@ dependencies {
 
   coreLibraryDesugaring(Dependencies.desugarJdkLibs)
 
-  implementation(Dependencies.androidFhirCommon)
+  //implementation(Dependencies.androidFhirCommon)
+  implementation(project(":common"))
+
   implementation(Dependencies.Androidx.appCompat)
   implementation(Dependencies.Androidx.constraintLayout)
   implementation(Dependencies.Androidx.coreKtx)
@@ -99,6 +107,7 @@ dependencies {
   testImplementation(Dependencies.truth)
 }
 
+/*
 tasks.dokkaHtml.configure {
   outputDirectory.set(
     file("../docs/${Releases.DataCapture.artifactId}/${Releases.DataCapture.version}"),
@@ -125,3 +134,4 @@ tasks.dokkaHtml.configure {
     }
   }
 }
+*/

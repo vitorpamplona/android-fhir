@@ -1,3 +1,4 @@
+import Dependencies.forceGuava
 import Dependencies.forceHapiVersion
 import Dependencies.forceJacksonVersion
 import Dependencies.removeIncompatibleDependencies
@@ -8,7 +9,7 @@ plugins {
   id(Plugins.BuildPlugins.kotlinAndroid)
   id(Plugins.BuildPlugins.mavenPublish)
   jacoco
-  id(Plugins.BuildPlugins.dokka).version(Plugins.Versions.dokka)
+  //id(Plugins.BuildPlugins.dokka).version(Plugins.Versions.dokka)
 }
 
 publishArtifact(Releases.Workflow)
@@ -78,6 +79,7 @@ afterEvaluate { configureFirebaseTestLabForLibraries() }
 configurations {
   all {
     removeIncompatibleDependencies()
+    forceGuava()
     forceHapiVersion()
     forceJacksonVersion()
   }
@@ -101,17 +103,19 @@ dependencies {
 
   implementation(Dependencies.Androidx.coreKtx)
 
-  implementation(Dependencies.Cql.engine)
-  implementation(Dependencies.Cql.engineJackson) // Necessary to import Executable XML/JSON CQL libs
+  // implementation(Dependencies.Cql.engine)
+  // implementation(Dependencies.Cql.engineJackson) // Necessary to import Executable XML/JSON CQL
+  // libs
   implementation(Dependencies.Cql.evaluator)
-  implementation(Dependencies.Cql.evaluatorBuilder)
-  implementation(Dependencies.Cql.evaluatorDagger)
-  implementation(Dependencies.Cql.evaluatorPlanDef)
-  implementation(Dependencies.Cql.translatorCqlToElm) // Overrides HAPI's old versions
-  implementation(Dependencies.Cql.translatorElm) // Overrides HAPI's old versions
-  implementation(Dependencies.Cql.translatorElmJackson) // Necessary to import XML/JSON CQL Libs
-  implementation(Dependencies.Cql.translatorModel) // Overrides HAPI's old versions
-  implementation(Dependencies.Cql.translatorModelJackson) // Necessary to import XML/JSON ModelInfos
+  // implementation(Dependencies.Cql.evaluatorBuilder)
+  // implementation(Dependencies.Cql.evaluatorDagger)
+  implementation(Dependencies.Cql.evaluatorFhirJackson)
+  // implementation(Dependencies.Cql.translatorCqlToElm) // Overrides HAPI's old versions
+  // implementation(Dependencies.Cql.translatorElm) // Overrides HAPI's old versions
+  // implementation(Dependencies.Cql.translatorElmJackson) // Necessary to import XML/JSON CQL Libs
+  // implementation(Dependencies.Cql.translatorModel) // Overrides HAPI's old versions
+  // implementation(Dependencies.Cql.translatorModelJackson) // Necessary to import XML/JSON
+  // ModelInfos
   implementation(Dependencies.timber)
 
   // Forces the most recent version of jackson, ignoring what dependencies use.
@@ -124,10 +128,7 @@ dependencies {
   implementation(Dependencies.Jackson.jaxbAnnotations)
   implementation(Dependencies.Jackson.jsr310)
 
-  // Runtime dependency that is required to run FhirPath (also requires minSDK of 26).
-  // Version 3.0 uses java.lang.System.Logger, which is not available on Android
-  // Replace for Guava when this PR gets merged: https://github.com/hapifhir/hapi-fhir/pull/3977
-  implementation(Dependencies.HapiFhir.caffeine)
+  implementation(Dependencies.HapiFhir.guavaCaching)
 
   implementation(Dependencies.Kotlin.kotlinCoroutinesAndroid)
   implementation(Dependencies.Kotlin.kotlinCoroutinesCore)
@@ -145,6 +146,7 @@ dependencies {
   testImplementation(project(":workflow-testing"))
 }
 
+/*
 tasks.dokkaHtml.configure {
   outputDirectory.set(file("../docs/${Releases.Workflow.artifactId}/${Releases.Workflow.version}"))
   suppressInheritedMembers.set(true)
@@ -173,3 +175,4 @@ tasks.dokkaHtml.configure {
     }
   }
 }
+*/

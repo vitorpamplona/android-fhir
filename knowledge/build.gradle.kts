@@ -1,3 +1,4 @@
+import Dependencies.forceGuava
 import java.net.URL
 
 plugins {
@@ -6,7 +7,7 @@ plugins {
   id(Plugins.BuildPlugins.kotlinKapt)
   id(Plugins.BuildPlugins.mavenPublish)
   jacoco
-  id(Plugins.BuildPlugins.dokka).version(Plugins.Versions.dokka)
+  //id(Plugins.BuildPlugins.dokka).version(Plugins.Versions.dokka)
 }
 
 publishArtifact(Releases.Knowledge)
@@ -70,6 +71,7 @@ configurations {
   all {
     exclude(module = "xpp3")
     exclude(module = "xpp3_min")
+    forceGuava()
   }
 }
 
@@ -104,6 +106,7 @@ dependencies {
   testImplementation(Dependencies.truth)
 }
 
+/*
 tasks.dokkaHtml.configure {
   outputDirectory.set(
     file("../docs/${Releases.Knowledge.artifactId}/${Releases.Knowledge.version}"),
@@ -123,3 +126,4 @@ tasks.dokkaHtml.configure {
     }
   }
 }
+*/

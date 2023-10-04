@@ -30,7 +30,7 @@ import org.opencds.cqf.cql.engine.runtime.Code
 import org.opencds.cqf.cql.engine.terminology.CodeSystemInfo
 import org.opencds.cqf.cql.engine.terminology.TerminologyProvider
 import org.opencds.cqf.cql.engine.terminology.ValueSetInfo
-import org.opencds.cqf.cql.evaluator.engine.util.ValueSetUtil
+import org.opencds.cqf.fhir.cql.engine.utility.ValueSets
 
 internal class FhirEngineTerminologyProvider(
   private val fhirContext: FhirContext,
@@ -60,8 +60,8 @@ internal class FhirEngineTerminologyProvider(
     runBlockingOrThrowMainThreadException {
       try {
         resolveValueSet(valueSetInfo).let {
-          ValueSetUtil.getCodesInExpansion(fhirContext, it)
-            ?: ValueSetUtil.getCodesInCompose(fhirContext, it)
+          ValueSets.getCodesInExpansion(fhirContext, it)
+            ?: ValueSets.getCodesInCompose(fhirContext, it)
         }
       } catch (e: Exception) {
         throw TerminologyProviderException(

@@ -19,8 +19,8 @@ package com.google.android.fhir.workflow
 import com.google.android.fhir.knowledge.KnowledgeManager
 import org.hl7.elm.r1.VersionedIdentifier
 import org.hl7.fhir.instance.model.api.IBaseResource
-import org.opencds.cqf.cql.evaluator.cql2elm.content.fhir.BaseFhirLibrarySourceProvider
-import org.opencds.cqf.cql.evaluator.fhir.adapter.r4.AdapterFactory
+import org.opencds.cqf.fhir.cql.cql2elm.content.BaseFhirLibrarySourceProvider
+import org.opencds.cqf.fhir.utility.adapter.AdapterFactory
 
 internal class FhirEngineLibraryContentProvider(
   adapterFactory: AdapterFactory,

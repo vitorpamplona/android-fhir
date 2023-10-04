@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import Dependencies.HapiFhir.guavaCaching
 import org.gradle.api.artifacts.Configuration
 import org.gradle.kotlin.dsl.exclude
 
@@ -34,22 +35,8 @@ object Dependencies {
   }
 
   object Cql {
-    const val openCdsGroup = "org.opencds.cqf.cql"
-    const val translatorGroup = "info.cqframework"
-
-    const val engine = "$openCdsGroup:engine:${Versions.Cql.engine}"
-    const val engineJackson = "$openCdsGroup:engine.jackson:${Versions.Cql.engine}"
-
-    const val evaluator = "$openCdsGroup:evaluator:${Versions.Cql.evaluator}"
-    const val evaluatorBuilder = "$openCdsGroup:evaluator.builder:${Versions.Cql.evaluator}"
-    const val evaluatorDagger = "$openCdsGroup:evaluator.dagger:${Versions.Cql.evaluator}"
-    const val evaluatorPlanDef = "$openCdsGroup:evaluator.plandefinition:${Versions.Cql.evaluator}"
-    const val translatorCqlToElm = "$translatorGroup:cql-to-elm:${Versions.Cql.translator}"
-    const val translatorElm = "$translatorGroup:elm:${Versions.Cql.translator}"
-    const val translatorModel = "$translatorGroup:model:${Versions.Cql.translator}"
-
-    const val translatorElmJackson = "$translatorGroup:elm-jackson:${Versions.Cql.translator}"
-    const val translatorModelJackson = "$translatorGroup:model-jackson:${Versions.Cql.translator}"
+    const val evaluator = "org.opencds.cqf.fhir:cqf-fhir-cr:${Versions.Cql.clinicalReasoning}"
+    const val evaluatorFhirJackson = "org.opencds.cqf.fhir:cqf-fhir-jackson:${Versions.Cql.clinicalReasoning}"
   }
 
   object Glide {
@@ -73,6 +60,8 @@ object Dependencies {
     const val validationR5 =
       "ca.uhn.hapi.fhir:hapi-fhir-validation-resources-r5:${Versions.hapiFhir}"
 
+    const val guavaCaching = "ca.uhn.hapi.fhir:hapi-fhir-caching-guava:${Versions.hapiFhir}"
+
     const val fhirCoreDstu2 = "ca.uhn.hapi.fhir:org.hl7.fhir.dstu2:${Versions.hapiFhirCore}"
     const val fhirCoreDstu2016 =
       "ca.uhn.hapi.fhir:org.hl7.fhir.dstu2016may:${Versions.hapiFhirCore}"
@@ -87,7 +76,7 @@ object Dependencies {
     // Runtime dependency that is required to run FhirPath (also requires minSDK of 26).
     // Version 3.0 uses java.lang.System.Logger, which is not available on Android
     // Replace for Guava when this PR gets merged: https://github.com/hapifhir/hapi-fhir/pull/3977
-    const val caffeine = "com.github.ben-manes.caffeine:caffeine:${Versions.caffeine}"
+    // const val caffeine = "com.github.ben-manes.caffeine:caffeine:${Versions.caffeine}"
   }
 
   object Jackson {
@@ -226,9 +215,7 @@ object Dependencies {
     }
 
     object Cql {
-      const val engine = "2.4.0"
-      const val evaluator = "2.4.0"
-      const val translator = "2.4.0"
+      const val clinicalReasoning = "3.0.0-PRE8-SNAPSHOT"
     }
 
     object Glide {
@@ -244,25 +231,19 @@ object Dependencies {
     const val androidFhirEngine = "0.1.0-beta03"
     const val androidFhirKnowledge = "0.1.0-alpha01"
     const val desugarJdkLibs = "2.0.3"
-    const val caffeine = "2.9.1"
     const val fhirUcum = "1.0.3"
     const val gson = "2.9.1"
-    const val guava = "28.2-android"
+    const val guava = "32.1.2-android"
 
     // Hapi FHIR and HL7 Core Components are interlinked.
-    // Newer versions of HapiFhir don't work on Android due to the use of Caffeine 3+
-    // Wait for this to release (6.3): https://github.com/hapifhir/hapi-fhir/pull/4196
-    const val hapiFhir = "6.0.1"
-
-    // Newer versions don't work on Android due to Apache Commons Codec:
-    // Wait for this fix: https://github.com/hapifhir/org.hl7.fhir.core/issues/1046
-    const val hapiFhirCore = "5.6.36"
+    const val hapiFhir = "6.8.0"
+    const val hapiFhirCore = "6.0.22"
 
     const val http = "4.11.0"
 
     // Maximum version that supports Android API Level 24:
     // https://github.com/FasterXML/jackson-databind/issues/3658
-    const val jackson = "2.13.5"
+    const val jackson = "2.15.2"
     const val jsonToolsPatch = "1.13"
     const val jsonAssert = "1.5.1"
     const val material = "1.9.0"
@@ -308,13 +289,20 @@ object Dependencies {
     exclude(group = "org.apache.httpcomponents")
   }
 
+  fun Configuration.forceGuava() {
+    // Removes caffeine
+    exclude(module = "hapi-fhir-caching-caffeine")
+    exclude(group = "com.github.ben-manes.caffeine", module = "caffeine")
+
+    resolutionStrategy { force(guava) }
+    resolutionStrategy { force(HapiFhir.guavaCaching) }
+  }
+
   fun Configuration.forceHapiVersion() {
     // Removes newer versions of caffeine and manually imports 2.9
     // Removes newer versions of hapi and keeps on 6.0.1
     // (newer versions don't work on Android)
     resolutionStrategy {
-      force(HapiFhir.caffeine)
-
       force(HapiFhir.fhirBase)
       force(HapiFhir.fhirClient)
       force(HapiFhir.fhirCoreConvertors)
