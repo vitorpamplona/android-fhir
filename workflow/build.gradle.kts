@@ -103,18 +103,9 @@ dependencies {
 
   implementation(Dependencies.Androidx.coreKtx)
 
-  // implementation(Dependencies.Cql.engine)
-  // implementation(Dependencies.Cql.engineJackson) // Necessary to import Executable XML/JSON CQL
-  // libs
   implementation(Dependencies.Cql.evaluator)
-  // implementation(Dependencies.Cql.evaluatorBuilder)
-  // implementation(Dependencies.Cql.evaluatorDagger)
   implementation(Dependencies.Cql.evaluatorFhirJackson)
-  // implementation(Dependencies.Cql.translatorCqlToElm) // Overrides HAPI's old versions
-  // implementation(Dependencies.Cql.translatorElm) // Overrides HAPI's old versions
-  // implementation(Dependencies.Cql.translatorElmJackson) // Necessary to import XML/JSON CQL Libs
-  // implementation(Dependencies.Cql.translatorModel) // Overrides HAPI's old versions
-  // implementation(Dependencies.Cql.translatorModelJackson) // Necessary to import XML/JSON
+
   // ModelInfos
   implementation(Dependencies.timber)
 
