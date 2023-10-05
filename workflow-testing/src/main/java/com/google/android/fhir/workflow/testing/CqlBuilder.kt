@@ -15,7 +15,7 @@
  */
 
 package com.google.android.fhir.workflow.testing
-
+/*
 import ca.uhn.fhir.context.FhirContext
 import ca.uhn.fhir.context.FhirVersionEnum
 import java.io.InputStream
@@ -42,21 +42,21 @@ object CqlBuilder : Loadable() {
   }
 
   /**
-   * Compiles a CQL InputStream to ELM
-   *
-   * @param cqlText the CQL Library
-   * @return a [CqlTranslator] object that contains the elm representation of the library inside it.
-   */
+ * Compiles a CQL InputStream to ELM
+ *
+ * @param cqlText the CQL Library
+ * @return a [CqlTranslator] object that contains the elm representation of the library inside it.
+ */
   fun compile(cqlText: InputStream): CqlTranslator {
     return compile(load(cqlText))
   }
 
   /**
-   * Compiles a CQL Text to ELM
-   *
-   * @param cqlText the CQL Library
-   * @return a [CqlTranslator] object that contains the elm representation of the library inside it.
-   */
+ * Compiles a CQL Text to ELM
+ *
+ * @param cqlText the CQL Library
+ * @return a [CqlTranslator] object that contains the elm representation of the library inside it.
+ */
   fun compile(cqlText: String): CqlTranslator {
     val modelManager = ModelManager()
     val libraryManager =
@@ -70,7 +70,7 @@ object CqlBuilder : Loadable() {
         modelManager,
         libraryManager,
         UcumEssenceService(this::class.java.getResourceAsStream("/ucum-essence.xml")),
-        *CqlTranslatorOptions.defaultOptions().options.toTypedArray(),
+ *CqlTranslatorOptions.defaultOptions().options.toTypedArray(),
       )
 
     // Helper makes sure the test CQL compiles. Reports an error if it doesn't
@@ -87,13 +87,13 @@ object CqlBuilder : Loadable() {
   }
 
   /**
-   * Assembles an ELM Library exported as a JSON in to a FHIRLibrary
-   *
-   * @param jsonElmStr the JSON representation of the ELM Library
-   * @param libName the Library name
-   * @param libVersion the Library Version
-   * @return a FHIR Library that includes the ELM Library.
-   */
+ * Assembles an ELM Library exported as a JSON in to a FHIRLibrary
+ *
+ * @param jsonElmStr the JSON representation of the ELM Library
+ * @param libName the Library name
+ * @param libVersion the Library Version
+ * @return a FHIR Library that includes the ELM Library.
+ */
   fun assembleFhirLib(
     cqlStr: String?,
     jsonElmStr: String?,
@@ -139,11 +139,11 @@ object CqlBuilder : Loadable() {
   }
 
   /**
-   * Parses a JSON representation of an ELM Library and assembles into a FHIR Library
-   *
-   * @param jsonElm the JSON representation of the ELM Library
-   * @return the assembled FHIR Library
-   */
+ * Parses a JSON representation of an ELM Library and assembles into a FHIR Library
+ *
+ * @param jsonElm the JSON representation of the ELM Library
+ * @return the assembled FHIR Library
+ */
   fun buildJsonLib(jsonElm: InputStream): Library {
     val strLib = load(jsonElm)
     val elmLibrary =
@@ -158,12 +158,12 @@ object CqlBuilder : Loadable() {
   }
 
   /**
-   * Compiles a CQL Text into ELM and assembles a FHIR Library that includes a Base64 representation
-   * of the JSON representation of the compiled ELM Library
-   *
-   * @param cqlInputStream the CQL Library
-   * @return the assembled FHIR Library
-   */
+ * Compiles a CQL Text into ELM and assembles a FHIR Library that includes a Base64 representation
+ * of the JSON representation of the compiled ELM Library
+ *
+ * @param cqlInputStream the CQL Library
+ * @return the assembled FHIR Library
+ */
   fun compileAndBuild(cqlInputStream: InputStream): Library {
     val cqlText = load(cqlInputStream)
     return compile(cqlText).let {
@@ -234,3 +234,4 @@ object CqlBuilder : Loadable() {
     }
   }
 }
+*/

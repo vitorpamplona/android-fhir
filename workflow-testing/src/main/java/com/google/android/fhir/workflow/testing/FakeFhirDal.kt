@@ -15,7 +15,7 @@
  */
 
 package com.google.android.fhir.workflow.testing
-
+/*
 import org.hl7.fhir.instance.model.api.IBaseResource
 import org.hl7.fhir.instance.model.api.IIdType
 import org.hl7.fhir.r4.model.Bundle
@@ -57,3 +57,4 @@ class FakeFhirDal : FhirDal {
   override fun searchByUrl(resourceType: String, url: String) =
     cacheByURL[url]?.filter { it.idElement.resourceType == resourceType }
 }
+*/

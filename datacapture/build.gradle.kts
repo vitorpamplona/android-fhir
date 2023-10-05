@@ -6,7 +6,7 @@ plugins {
   id(Plugins.BuildPlugins.kotlinAndroid)
   id(Plugins.BuildPlugins.mavenPublish)
   jacoco
-  //id(Plugins.BuildPlugins.dokka).version(Plugins.Versions.dokka)
+  id(Plugins.BuildPlugins.dokka).version(Plugins.Versions.dokka)
 }
 
 publishArtifact(Releases.DataCapture)
@@ -77,7 +77,7 @@ dependencies {
 
   coreLibraryDesugaring(Dependencies.desugarJdkLibs)
 
-  //implementation(Dependencies.androidFhirCommon)
+  // implementation(Dependencies.androidFhirCommon)
   implementation(project(":common"))
 
   implementation(Dependencies.Androidx.appCompat)
@@ -107,7 +107,6 @@ dependencies {
   testImplementation(Dependencies.truth)
 }
 
-/*
 tasks.dokkaHtml.configure {
   outputDirectory.set(
     file("../docs/${Releases.DataCapture.artifactId}/${Releases.DataCapture.version}"),
@@ -134,4 +133,3 @@ tasks.dokkaHtml.configure {
     }
   }
 }
-*/

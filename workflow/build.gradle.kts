@@ -9,7 +9,7 @@ plugins {
   id(Plugins.BuildPlugins.kotlinAndroid)
   id(Plugins.BuildPlugins.mavenPublish)
   jacoco
-  //id(Plugins.BuildPlugins.dokka).version(Plugins.Versions.dokka)
+  id(Plugins.BuildPlugins.dokka).version(Plugins.Versions.dokka)
 }
 
 publishArtifact(Releases.Workflow)
@@ -146,7 +146,6 @@ dependencies {
   testImplementation(project(":workflow-testing"))
 }
 
-/*
 tasks.dokkaHtml.configure {
   outputDirectory.set(file("../docs/${Releases.Workflow.artifactId}/${Releases.Workflow.version}"))
   suppressInheritedMembers.set(true)
@@ -175,4 +174,3 @@ tasks.dokkaHtml.configure {
     }
   }
 }
-*/

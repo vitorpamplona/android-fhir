@@ -11,7 +11,7 @@ plugins {
   id(Plugins.BuildPlugins.kotlinKapt)
   id(Plugins.BuildPlugins.mavenPublish)
   jacoco
-  //id(Plugins.BuildPlugins.dokka).version(Plugins.Versions.dokka)
+  id(Plugins.BuildPlugins.dokka).version(Plugins.Versions.dokka)
 }
 
 publishArtifact(Releases.Engine)
@@ -122,7 +122,7 @@ dependencies {
   implementation(Dependencies.Room.runtime)
 
   implementation(project(":common"))
-  //implementation(Dependencies.androidFhirCommon)
+  // implementation(Dependencies.androidFhirCommon)
 
   implementation(Dependencies.guava)
   implementation(Dependencies.httpInterceptor)
@@ -145,7 +145,6 @@ dependencies {
   testImplementation(Dependencies.truth)
 }
 
-/*
 tasks.dokkaHtml.configure {
   outputDirectory.set(file("../docs/${Releases.Engine.artifactId}/${Releases.Engine.version}"))
   suppressInheritedMembers.set(true)
@@ -170,4 +169,3 @@ tasks.dokkaHtml.configure {
     }
   }
 }
-*/
