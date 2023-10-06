@@ -73,11 +73,6 @@ object Dependencies {
     const val fhirCoreUtils = "ca.uhn.hapi.fhir:org.hl7.fhir.utilities:${Versions.hapiFhirCore}"
     const val fhirCoreConvertors =
       "ca.uhn.hapi.fhir:org.hl7.fhir.convertors:${Versions.hapiFhirCore}"
-
-    // Runtime dependency that is required to run FhirPath (also requires minSDK of 26).
-    // Version 3.0 uses java.lang.System.Logger, which is not available on Android
-    // Replace for Guava when this PR gets merged: https://github.com/hapifhir/hapi-fhir/pull/3977
-    // const val caffeine = "com.github.ben-manes.caffeine:caffeine:${Versions.caffeine}"
   }
 
   object Jackson {
