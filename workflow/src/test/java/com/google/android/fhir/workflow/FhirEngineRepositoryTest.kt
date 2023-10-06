@@ -38,7 +38,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
-class FhirEngineRepoTest {
+class FhirEngineRepositoryTest {
 
   @get:Rule val fhirEngineProviderRule = FhirEngineProviderTestRule()
   private lateinit var fhirEngine: FhirEngine
