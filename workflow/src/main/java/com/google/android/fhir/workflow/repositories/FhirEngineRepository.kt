@@ -32,9 +32,12 @@ import org.hl7.fhir.instance.model.api.IBaseConformance
 import org.hl7.fhir.instance.model.api.IBaseParameters
 import org.hl7.fhir.instance.model.api.IBaseResource
 import org.hl7.fhir.instance.model.api.IIdType
+import org.hl7.fhir.r4.model.IdType
 import org.hl7.fhir.r4.model.Resource
 import org.opencds.cqf.fhir.api.Repository
+import org.opencds.cqf.fhir.utility.Ids
 import timber.log.Timber
+import java.util.function.Function
 
 class FhirEngineRepository(
   private val fhirContext: FhirContext,
@@ -59,8 +62,13 @@ class FhirEngineRepository(
   override fun <T : IBaseResource?> create(
     resource: T,
     headers: MutableMap<String, String>?,
-  ): MethodOutcome {
-    TODO("Not yet implemented")
+  ): MethodOutcome = runBlockingOrThrowMainThreadException {
+    val results = fhirEngine.create(resource as Resource)
+
+    val outcome = MethodOutcome()
+    outcome.created = true
+    outcome.id = IdType(resource.fhirType(), results.first())
+    return@runBlockingOrThrowMainThreadException outcome
   }
 
   override fun <I : IIdType?, P : IBaseParameters?> patch(
@@ -74,16 +82,20 @@ class FhirEngineRepository(
   override fun <T : IBaseResource?> update(
     resource: T,
     headers: MutableMap<String, String>?,
-  ): MethodOutcome {
-    TODO("Not yet implemented")
+  ): MethodOutcome = runBlockingOrThrowMainThreadException {
+    fhirEngine.update(resource as Resource)
+    return@runBlockingOrThrowMainThreadException MethodOutcome()
   }
 
   override fun <T : IBaseResource?, I : IIdType?> delete(
     resourceType: Class<T>?,
     id: I,
     headers: MutableMap<String, String>?,
-  ): MethodOutcome {
-    TODO("Not yet implemented")
+  ): MethodOutcome = runBlockingOrThrowMainThreadException {
+    if (id != null) {
+      fhirEngine.delete(getResourceType(resourceType as Class<Resource>), id.idPart)
+    }
+    return@runBlockingOrThrowMainThreadException MethodOutcome()
   }
 
   override fun <B : IBaseBundle, T : IBaseResource?> search(

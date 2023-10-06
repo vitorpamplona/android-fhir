@@ -31,7 +31,6 @@ import org.hl7.fhir.r4.model.Attachment
 import org.hl7.fhir.r4.model.Enumerations
 import org.hl7.fhir.r4.model.Library
 import org.junit.Assert.fail
-import org.opencds.cqf.cql.engine.serializing.CqlLibraryReaderFactory
 import org.skyscreamer.jsonassert.JSONAssert
 
 object CqlBuilder : Loadable() {
@@ -65,13 +64,7 @@ object CqlBuilder : Loadable() {
       }
 
     val translator =
-      CqlTranslator.fromText(
-        cqlText,
-        modelManager,
-        libraryManager,
-        UcumEssenceService(this::class.java.getResourceAsStream("/ucum-essence.xml")),
- *CqlTranslatorOptions.defaultOptions().options.toTypedArray(),
-      )
+      CqlTranslator.fromText(cqlText, libraryManager)
 
     // Helper makes sure the test CQL compiles. Reports an error if it doesn't
     if (translator.errors.isNotEmpty()) {
@@ -144,6 +137,8 @@ object CqlBuilder : Loadable() {
  * @param jsonElm the JSON representation of the ELM Library
  * @return the assembled FHIR Library
  */
+
+  /*
   fun buildJsonLib(jsonElm: InputStream): Library {
     val strLib = load(jsonElm)
     val elmLibrary =
@@ -156,6 +151,7 @@ object CqlBuilder : Loadable() {
       elmLibrary.identifier.version,
     )
   }
+  */
 
   /**
  * Compiles a CQL Text into ELM and assembles a FHIR Library that includes a Base64 representation
