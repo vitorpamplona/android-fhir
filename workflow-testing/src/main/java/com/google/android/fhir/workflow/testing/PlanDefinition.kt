@@ -242,4 +242,3 @@ object PlanDefinition : Loadable() {
     }
   }
 }
-

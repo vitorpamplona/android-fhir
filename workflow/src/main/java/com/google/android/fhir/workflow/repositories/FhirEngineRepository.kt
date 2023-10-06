@@ -35,9 +35,7 @@ import org.hl7.fhir.instance.model.api.IIdType
 import org.hl7.fhir.r4.model.IdType
 import org.hl7.fhir.r4.model.Resource
 import org.opencds.cqf.fhir.api.Repository
-import org.opencds.cqf.fhir.utility.Ids
 import timber.log.Timber
-import java.util.function.Function
 
 class FhirEngineRepository(
   private val fhirContext: FhirContext,
