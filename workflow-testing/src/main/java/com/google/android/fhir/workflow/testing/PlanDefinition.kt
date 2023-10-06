@@ -15,7 +15,7 @@
  */
 
 package com.google.android.fhir.workflow.testing
-/*
+
 import ca.uhn.fhir.context.FhirContext
 import ca.uhn.fhir.context.FhirVersionEnum
 import org.hl7.fhir.instance.model.api.IBaseBundle
@@ -242,4 +242,4 @@ object PlanDefinition : Loadable() {
     }
   }
 }
-*/
+
