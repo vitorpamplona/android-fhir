@@ -42,6 +42,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.opencds.cqf.cql.evaluator.measure.common.MeasureEvalType
+import org.opencds.cqf.fhir.cr.measure.common.MeasureEvalType
 import org.robolectric.RobolectricTestRunner
 import org.skyscreamer.jsonassert.JSONAssert.assertEquals
 
@@ -236,7 +237,7 @@ class FhirOperatorTest {
         start = "2020-01-01",
         end = "2020-01-31",
         reportType = MeasureEvalType.SUBJECT.toCode(),
-        subject = "charity-otala-1",
+        subjectId = "charity-otala-1",
         practitioner = "jane",
       )
 
