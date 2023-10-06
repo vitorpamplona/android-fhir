@@ -38,7 +38,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
-class FhirEngineDalTest {
+class FhirEngineRepoTest {
 
   @get:Rule val fhirEngineProviderRule = FhirEngineProviderTestRule()
   private lateinit var fhirEngine: FhirEngine
@@ -54,7 +54,7 @@ class FhirEngineDalTest {
   }
 
   @Test
-  fun testDalRead() = runBlockingOnWorkerThread {
+  fun testRepoRead() = runBlockingOnWorkerThread {
     val result = fhirEngineRepository.read(Patient::class.java, IdType("Patient/${testPatient.id}"))
 
     assertThat(result).isInstanceOf(Patient::class.java)
@@ -63,13 +63,13 @@ class FhirEngineDalTest {
   }
 
   @Test(expected = BlockingMainThreadException::class)
-  fun `testDalRead when called from main thread should throw BlockingMainThreadException`(): Unit =
+  fun `testRepoRead when called from main thread should throw BlockingMainThreadException`(): Unit =
     runBlocking {
       fhirEngineRepository.read(Patient::class.java, IdType("Patient/${testPatient.id}"))
     }
 
   @Test
-  fun testDalCreate() = runBlockingOnWorkerThread {
+  fun testRepoCreate() = runBlockingOnWorkerThread {
     val patient =
       Patient().apply {
         id = "Patient/2"
@@ -84,25 +84,25 @@ class FhirEngineDalTest {
   }
 
   @Test(expected = BlockingMainThreadException::class)
-  fun `testDalCreate when called from main thread should throw BlockingMainThreadException`():
+  fun `testRepoCreate when called from main thread should throw BlockingMainThreadException`():
     Unit = runBlocking { fhirEngineRepository.create(testPatient) }
 
   @Test
-  fun testDalUpdate() = runBlockingOnWorkerThread {
+  fun testRepoUpdate() = runBlockingOnWorkerThread {
     testPatient.name = listOf(HumanName().addGiven("Eve"))
 
     fhirEngineRepository.update(testPatient)
     val result = fhirEngine.search<Patient> {}.single()
 
-    assertThat(result.nameFirstRep.givenAsSingleString).isEqualTo("Eve")
+    assertThat(result.resource.nameFirstRep.givenAsSingleString).isEqualTo("Eve")
   }
 
   @Test(expected = BlockingMainThreadException::class)
-  fun `testDalUpdate when called from main thread should throw BlockingMainThreadException`():
+  fun `testRepoUpdate when called from main thread should throw BlockingMainThreadException`():
     Unit = runBlocking { fhirEngineRepository.update(testPatient) }
 
   @Test
-  fun testDalDelete() = runBlockingOnWorkerThread {
+  fun testRepoDelete() = runBlockingOnWorkerThread {
     fhirEngineRepository.delete(Patient::class.java, testPatient.idElement)
 
     val result = fhirEngine.search<Patient> {}
@@ -111,17 +111,18 @@ class FhirEngineDalTest {
   }
 
   @Test(expected = BlockingMainThreadException::class)
-  fun `testDalDelete when called from main thread should throw BlockingMainThreadException`() =
+  fun `testRepoDelete when called from main thread should throw BlockingMainThreadException`() =
     runBlocking {
       fhirEngineRepository.delete(Patient::class.java, testPatient.idElement)
+      Unit
     }
 
-  @After fun fhirEngine() = runBlocking { fhirEngine.delete(ResourceType.Patient, "Patient/1") }
+  @After fun fhirEngine() = runBlocking { fhirEngine.delete(ResourceType.Patient, "1") }
 
   companion object {
     val testPatient =
       Patient().apply {
-        id = "Patient/1"
+        id = "1"
         addName(HumanName().addGiven("Jane"))
       }
   }

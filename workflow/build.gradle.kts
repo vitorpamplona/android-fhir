@@ -126,7 +126,8 @@ dependencies {
   implementation(Dependencies.Kotlin.kotlinCoroutinesCore)
   implementation(Dependencies.Kotlin.stdlib)
   implementation(Dependencies.xerces)
-  implementation(Dependencies.androidFhirEngine) { exclude(module = "truth") }
+  //implementation(Dependencies.androidFhirEngine) { exclude(module = "truth") }
+  implementation(project(":engine"))
   implementation(project(":knowledge"))
 
   testImplementation(Dependencies.AndroidxTest.core)

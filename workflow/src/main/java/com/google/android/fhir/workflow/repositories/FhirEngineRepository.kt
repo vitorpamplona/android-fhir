@@ -109,14 +109,14 @@ class FhirEngineRepository(
       if (resourceType != null) {
         val search = Search(type = getResourceType(resourceType as Class<Resource>))
         if (searchParameters == null) {
-          fhirEngine.search<Resource>(search).forEach(builder::addCollectionEntry)
+          fhirEngine.search<Resource>(search).map { it.resource }.forEach(builder::addCollectionEntry)
         } else if (searchParameters.size == 1 && searchParameters.containsKey("url")) {
           // first AND then OR
           searchParameters.forEach { param ->
             param.value.forEach { search.applyFilterParam(param.key, it, Operation.OR) }
           }
 
-          fhirEngine.search<Resource>(search).forEach(builder::addCollectionEntry)
+          fhirEngine.search<Resource>(search).map { it.resource }.forEach(builder::addCollectionEntry)
         }
       }
 

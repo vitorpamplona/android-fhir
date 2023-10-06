@@ -27,6 +27,7 @@ import com.google.android.fhir.db.ResourceNotFoundException
 import com.google.android.fhir.search.Search
 import com.google.android.fhir.search.filter.TokenParamFilterCriterion
 import com.google.android.fhir.search.query.XFhirQueryTranslator.applyFilterParam
+import com.google.android.fhir.search.search
 import java.math.BigDecimal
 import java.util.Date
 import org.hl7.fhir.r4.model.Coding
@@ -74,7 +75,7 @@ internal class FhirEngineRetrieveProvider(private val fhirEngine: FhirEngine) :
       filterByCode(codePath, codes, search)
       filterByValueSet(codePath, valueSet, search)
       filterByDateRange(datePath, dateLowPath, dateHighPath, dateRange, search)
-      fhirEngine.search(search)
+      fhirEngine.search<Resource>(search)
     }
   }
 
