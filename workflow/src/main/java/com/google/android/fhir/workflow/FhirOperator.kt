@@ -16,10 +16,12 @@
 
 package com.google.android.fhir.workflow
 
+import android.content.Context
 import androidx.annotation.WorkerThread
 import ca.uhn.fhir.context.FhirContext
 import ca.uhn.fhir.context.FhirVersionEnum
 import com.google.android.fhir.FhirEngine
+import com.google.android.fhir.FhirEngineProvider
 import com.google.android.fhir.knowledge.KnowledgeManager
 import com.google.android.fhir.workflow.repositories.FhirEngineRepository
 import com.google.android.fhir.workflow.repositories.KnowledgeRepository
@@ -216,5 +218,27 @@ internal constructor(
       /* prefetchData = */ null,
       libraryProcessor,
     ) as IBaseResource
+  }
+
+  class Builder(private val applicationContext: Context) {
+    private var fhirContext: FhirContext? = null
+    private var fhirEngine: FhirEngine? = null
+    private var knowledgeManager: KnowledgeManager? = null
+
+    fun fhirEngine(fhirEngine: FhirEngine) = apply { this.fhirEngine = fhirEngine }
+
+    fun knowledgeManager(knowledgeManager: KnowledgeManager) = apply {
+      this.knowledgeManager = knowledgeManager
+    }
+
+    fun fhirContext(fhirContext: FhirContext) = apply { this.fhirContext = fhirContext }
+
+    fun build(): FhirOperator {
+      return FhirOperator(
+        fhirContext ?: FhirContext(FhirVersionEnum.R4),
+        fhirEngine ?: FhirEngineProvider.getInstance(applicationContext),
+        knowledgeManager ?: KnowledgeManager.create(applicationContext),
+      )
+    }
   }
 }

@@ -15,7 +15,7 @@
  */
 
 package com.google.android.fhir.workflow.testing
-/*
+
 import ca.uhn.fhir.context.FhirContext
 import ca.uhn.fhir.context.FhirVersionEnum
 import java.io.InputStream
@@ -87,13 +87,13 @@ object CqlBuilder : Loadable() {
   }
 
   /**
- * Assembles an ELM Library exported as a JSON in to a FHIRLibrary
- *
- * @param jsonElmStr the JSON representation of the ELM Library
- * @param libName the Library name
- * @param libVersion the Library Version
- * @return a FHIR Library that includes the ELM Library.
- */
+   * Assembles an ELM Library exported as a JSON into a FHIRLibrary
+   *
+   * @param jsonElmStr the JSON representation of the ELM Library
+   * @param libName the Library name
+   * @param libVersion the Library Version
+   * @return a FHIR Library that includes the ELM Library.
+   */
   fun assembleFhirLib(
     cqlStr: String?,
     jsonElmStr: String?,
@@ -218,7 +218,7 @@ object CqlBuilder : Loadable() {
     }
 
     fun generatesFhirLibraryEqualsTo(expectedFhirAssetName: String): CompiledCql {
-      // Given the ELM is the same, builds the lib with the expented, not the new ELM to make sure
+      // Given the ELM is the same, builds the lib with the expected, not the new ELM to make sure
       // the base 64 representation of the Library matches.
       val library =
         assembleFhirLib(
@@ -234,4 +234,4 @@ object CqlBuilder : Loadable() {
     }
   }
 }
-*/
+
