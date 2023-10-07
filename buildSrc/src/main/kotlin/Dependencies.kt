@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import Dependencies.HapiFhir.guavaCaching
 import org.gradle.api.artifacts.Configuration
 import org.gradle.kotlin.dsl.exclude
 
