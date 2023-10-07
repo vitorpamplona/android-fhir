@@ -77,7 +77,6 @@ dependencies {
 
   coreLibraryDesugaring(Dependencies.desugarJdkLibs)
 
-  // implementation(Dependencies.androidFhirCommon)
   implementation(project(":common"))
 
   implementation(Dependencies.Androidx.appCompat)

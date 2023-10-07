@@ -296,8 +296,10 @@ object Dependencies {
     exclude(module = "hapi-fhir-caching-caffeine")
     exclude(group = "com.github.ben-manes.caffeine", module = "caffeine")
 
-    resolutionStrategy { force(guava) }
-    resolutionStrategy { force(HapiFhir.guavaCaching) }
+    resolutionStrategy {
+      force(guava)
+      force(HapiFhir.guavaCaching)
+    }
   }
 
   fun Configuration.forceHapiVersion() {

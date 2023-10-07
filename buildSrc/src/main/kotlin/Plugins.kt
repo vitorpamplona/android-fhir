@@ -17,6 +17,8 @@
 object Plugins {
 
   object BuildPlugins {
+    const val androidFhirGenerateSearchParams =
+      "com.google.android.fhir.codegen.GenerateSearchParamsPlugin"
     const val androidLib = "com.android.library"
     const val application = "com.android.application"
     const val benchmark = "androidx.benchmark"
@@ -46,6 +48,6 @@ object Plugins {
   object Versions {
     const val androidGradlePlugin = "8.0.2"
     const val benchmarkPlugin = "1.1.0"
-    const val dokka = "1.7.20"
+    const val dokka = "1.9.0"
   }
 }

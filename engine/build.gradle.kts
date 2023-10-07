@@ -1,7 +1,6 @@
 import Dependencies.forceGuava
 import Dependencies.forceHapiVersion
 import Dependencies.forceJacksonVersion
-import codegen.GenerateSearchParamsTask
 import java.net.URL
 
 plugins {
@@ -11,24 +10,24 @@ plugins {
   id(Plugins.BuildPlugins.mavenPublish)
   jacoco
   id(Plugins.BuildPlugins.dokka).version(Plugins.Versions.dokka)
+  id(Plugins.BuildPlugins.androidFhirGenerateSearchParams)
 }
 
 publishArtifact(Releases.Engine)
 
 createJacocoTestReportTask()
 
-val generateSearchParamsTask =
-  project.tasks.register("generateSearchParamsTask", GenerateSearchParamsTask::class) {
-    srcOutputDir.set(project.layout.buildDirectory.dir("gen/main"))
-    testOutputDir.set(project.layout.buildDirectory.dir("gen/test"))
-  }
+generateSearchParams {
+  srcOutputDir.set(project.layout.buildDirectory.dir("gen/main"))
+  testOutputDir.set(project.layout.buildDirectory.dir("gen/test"))
+}
 
 kotlin {
   sourceSets {
     val main by getting
     val test by getting
-    main.kotlin.srcDirs(generateSearchParamsTask.map { it.srcOutputDir })
-    test.kotlin.srcDirs(generateSearchParamsTask.map { it.testOutputDir })
+    main.kotlin.srcDirs(project.layout.buildDirectory.dir("gen/main"))
+    test.kotlin.srcDirs(project.layout.buildDirectory.dir("gen/test"))
   }
   jvmToolchain(11)
 }
@@ -121,7 +120,6 @@ dependencies {
   implementation(Dependencies.Room.runtime)
 
   implementation(project(":common"))
-  // implementation(Dependencies.androidFhirCommon)
 
   implementation(Dependencies.guava)
   implementation(Dependencies.httpInterceptor)
@@ -132,6 +130,7 @@ dependencies {
 
   kapt(Dependencies.Room.compiler)
 
+  testImplementation(project(":common"))
   testImplementation(Dependencies.AndroidxTest.archCore)
   testImplementation(Dependencies.AndroidxTest.core)
   testImplementation(Dependencies.AndroidxTest.workTestingRuntimeKtx)
