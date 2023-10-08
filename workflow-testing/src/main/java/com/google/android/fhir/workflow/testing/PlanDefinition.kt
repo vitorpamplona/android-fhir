@@ -58,8 +58,6 @@ object PlanDefinition : Loadable() {
     private val encounterID: String?,
   ) {
     private val fhirDal = InMemoryFhirRepository(fhirContext)
-    private lateinit var dataEndpoint: Endpoint
-    private lateinit var libraryEndpoint: Endpoint
     private lateinit var baseResource: IBaseResource
 
     fun addAll(resource: IBaseResource) {
@@ -70,7 +68,9 @@ object PlanDefinition : Loadable() {
     }
 
     fun withData(dataAssetName: String): Apply {
-      addAll(parse(dataAssetName))
+      baseResource = parse(dataAssetName)
+
+      addAll(baseResource)
       return this
     }
 
