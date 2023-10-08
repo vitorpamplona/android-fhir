@@ -97,7 +97,7 @@ class FHIRPathEngineHostServicesTest {
   @Test
   fun testFHIRPathHostServices_resolveReference_throwsUnsupportedOperationException() {
     assertThrows(UnsupportedOperationException::class.java) {
-      FHIRPathEngineHostServices.resolveReference(mapOf<Any, Any>(), "")
+      FHIRPathEngineHostServices.resolveReference(mapOf<Any, Any>(), "", null)
     }
   }
 
