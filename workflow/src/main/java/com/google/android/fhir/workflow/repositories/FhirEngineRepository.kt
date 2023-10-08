@@ -123,6 +123,15 @@ class FhirEngineRepository(
             .search<Resource>(search)
             .map { it.resource }
             .forEach(builder::addCollectionEntry)
+        } else {
+          searchParameters.forEach { param ->
+            param.value.forEach { search.applyFilterParam(param.key, it, Operation.OR) }
+          }
+
+          fhirEngine
+            .search<Resource>(search)
+            .map { it.resource }
+            .forEach(builder::addCollectionEntry)
         }
       }
 
