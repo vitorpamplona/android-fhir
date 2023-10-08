@@ -34,7 +34,7 @@ import org.fhir.ucum.UcumException
  * For the implementation of UCUM with FHIR, see https://github.com/FHIR/Ucum-java
  */
 object UnitConverter {
-  private val ucumService by lazy {
+  val ucumService by lazy {
     UcumEssenceService(this::class.java.getResourceAsStream("/ucum-essence.xml"))
   }
 

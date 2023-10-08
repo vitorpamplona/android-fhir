@@ -84,6 +84,7 @@ dependencies {
   androidTestImplementation(Dependencies.truth)
 
   api(Dependencies.HapiFhir.structuresR4) { exclude(module = "junit") }
+  api(Dependencies.HapiFhir.guavaCaching)
 
   coreLibraryDesugaring(Dependencies.desugarJdkLibs)
 

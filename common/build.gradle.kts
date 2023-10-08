@@ -32,6 +32,7 @@ configurations {
 
 dependencies {
   api(Dependencies.HapiFhir.structuresR4)
+  api(Dependencies.HapiFhir.guavaCaching)
 
   implementation(Dependencies.fhirUcum)
 

@@ -101,6 +101,7 @@ dependencies {
   androidTestImplementation(project(":workflow-testing"))
 
   api(Dependencies.HapiFhir.structuresR4) { exclude(module = "junit") }
+  api(Dependencies.HapiFhir.guavaCaching)
 
   implementation(Dependencies.Androidx.coreKtx)
 
