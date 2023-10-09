@@ -16,14 +16,22 @@
 
 package com.google.android.fhir.workflow
 
+import ca.uhn.fhir.context.FhirContext
 import com.google.android.fhir.workflow.testing.PlanDefinition
-import org.junit.Ignore
+import com.google.android.fhir.workflow.testing.TestRepositoryFactory
+import org.hl7.fhir.r4.model.IdType
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.opencds.cqf.fhir.utility.r4.Parameters.parameters
+import org.opencds.cqf.fhir.utility.r4.Parameters.part
+import org.opencds.cqf.fhir.utility.r4.Parameters.stringPart
 import org.robolectric.RobolectricTestRunner
+
 
 @RunWith(RobolectricTestRunner::class)
 class PlanDefinitionProcessorJavaTest {
+  private val fhirContext = FhirContext.forR4Cached()
+
   @Test
   fun testChildRoutineVisit() =
     PlanDefinition.Assert.that(
@@ -32,11 +40,62 @@ class PlanDefinitionProcessorJavaTest {
         null,
       )
       .withData("/plan-definition/child-routine-visit/child_routine_visit_patient.json")
-      .withLibrary("/plan-definition/child-routine-visit/child_routine_visit_plan_definition.json")
+      .withContent("/plan-definition/child-routine-visit/child_routine_visit_plan_definition.json")
+      .withTerminology("/plan-definition/child-routine-visit/child_routine_visit_plan_definition.json")
       .apply()
       .isEqualsTo("/plan-definition/child-routine-visit/child_routine_visit_careplan.json")
 
-  @Test
+    @Test
+    fun testAncVisitContainedActivityDefinition() =
+        PlanDefinition.Assert.that("AncVisit-PlanDefinition", "Patient/TEST_PATIENT", null, null)
+            .withData("/plan-definition/anc-visit/anc_visit_patient.json")
+            .withContent("/plan-definition/anc-visit/anc_visit_plan_definition.json")
+            .withTerminology("/plan-definition/anc-visit/anc_visit_plan_definition.json")
+            .apply()
+            .isEqualsTo("/plan-definition/anc-visit/anc_visit_careplan.json")
+
+    @Test
+    fun testANCDT17() {
+        val repository = TestRepositoryFactory.createRepository(
+            fhirContext, this.javaClass, "/plan-definition/anc-dak"
+        )
+        PlanDefinition.Assert.that("ANCDT17", "Patient/5946f880-b197-400b-9caa-a3c661d23041", "Encounter/helloworld-patient-1-encounter-1", null)
+            .withRepository(repository)
+            .withParameters(parameters(part("encounter", "helloworld-patient-1-encounter-1")))
+            .withExpectedCarePlanId(IdType("CarePlan", "ANCDT17"))
+            .apply()
+            .equalsToExpected()
+    }
+
+    @Test
+    fun testANCDT17WithElm() {
+        PlanDefinition.Assert.that(
+            "ANCDT17",
+            "Patient/5946f880-b197-400b-9caa-a3c661d23041",
+            "Encounter/ANCDT17-encounter",
+            null
+        )
+            .withData("/plan-definition/anc-dak/data-bundle.json")
+            .withContent("/plan-definition/anc-dak/content-bundle.json")
+            .withTerminology("/plan-definition/anc-dak/terminology-bundle.json")
+            .withParameters(parameters(part("encounter", "ANCDT17-encounter")))
+            .apply()
+            .isEqualsTo("/plan-definition/anc-dak/output-careplan.json")
+    }
+
+    @Test
+    fun testFhirPath() {
+        val planDefinitionID = "DischargeInstructionsPlan"
+        val patientID = "Patient/Patient1"
+        val practitionerID = "Practitioner/Practitioner1"
+        val data = "/plan-definition/tests/Bundle-DischargeInstructions-Patient-Data.json"
+        PlanDefinition.Assert.that(planDefinitionID, patientID, null, practitionerID)
+            .withAdditionalData(data)
+            .applyR5()
+            .hasCommunicationRequestPayload()
+    }
+
+    @Test
   fun testHelloWorld() =
     PlanDefinition.Assert.that(
         "hello-world-patient-view",
@@ -44,58 +103,118 @@ class PlanDefinitionProcessorJavaTest {
         "helloworld-patient-1-encounter-1",
       )
       .withData("/plan-definition/hello-world/hello-world-patient-data.json")
-      .withLibrary("/plan-definition/hello-world/hello-world-patient-view-bundle.json")
+      .withContent("/plan-definition/hello-world/hello-world-patient-view-bundle.json")
+      .withTerminology("/plan-definition/hello-world/hello-world-patient-view-bundle.json")
       .apply()
       .isEqualsTo("/plan-definition/hello-world/hello-world-careplan.json")
 
-  @Test
-  @Ignore("https://github.com/google/android-fhir/issues/1890")
-  fun testOpioidRec10PatientView() =
-    PlanDefinition.Assert.that(
-        "opioidcds-10-patient-view",
-        "example-rec-10-patient-view-POS-Cocaine-drugs",
-        "example-rec-10-patient-view-POS-Cocaine-drugs-prefetch",
-      )
-      .withData(
-        "/plan-definition/opioid-Rec10-patient-view/opioid-Rec10-patient-view-patient-data.json",
-      )
-      .withLibrary(
-        "/plan-definition/opioid-Rec10-patient-view/opioid-Rec10-patient-view-bundle.json",
-      )
-      .apply()
-      .isEqualsTo(
-        "/plan-definition/opioid-Rec10-patient-view/opioid-Rec10-patient-view-careplan.json",
-      )
+    @Test
+    fun testOpioidRec10PatientView() {
+        val planDefinitionID = "opioidcds-10-patient-view"
+        val patientID = "example-rec-10-patient-view-POS-Cocaine-drugs"
+        val encounterID = "example-rec-10-patient-view-POS-Cocaine-drugs-prefetch"
+        val repository = TestRepositoryFactory.createRepository(
+            fhirContext,
+            this.javaClass,
+            "/plandefinition/opioid-Rec10-patient-view"
+        )
+        PlanDefinition.Assert.that(planDefinitionID, patientID, encounterID, null)
+            .withRepository(repository)
+            .withExpectedCarePlanId(IdType("CarePlan", "opioidcds-10-patient-view"))
+            .apply()
+            .equalsToExpected()
+    }
 
-  @Test
-  fun testRuleFiltersNotReportable() =
-    PlanDefinition.Assert.that(
-        "plandefinition-RuleFilters-1.0.0",
-        "NotReportable",
-        null,
-      )
-      .withData("/plan-definition/rule-filters/tests-NotReportable-bundle.json")
-      .withLibrary("/plan-definition/rule-filters/RuleFilters-1.0.0-bundle.json")
-      .apply()
-      .isEqualsTo("/plan-definition/rule-filters/NotReportableCarePlan.json")
+    @Test
+    fun testCDSHooksMultipleActions() {
+        val planDefinitionID = "CdsHooksMultipleActions-PlanDefinition-1.0.0"
+        val patientID = "patient-CdsHooksMultipleActions"
+        val data = "/plandefinition/cds-hooks-multiple-actions/cds_hooks_multiple_actions_patient_data.json"
+        val content = "/plandefinition/cds-hooks-multiple-actions/cds_hooks_multiple_actions_plan_definition.json"
+        PlanDefinition.Assert.that(planDefinitionID, patientID, null, null)
+            .withData(data)
+            .withContent(content)
+            .withTerminology(content)
+            .apply()
+            .isEqualsTo("/plandefinition/cds-hooks-multiple-actions/cds_hooks_multiple_actions_careplan.json")
+    }
 
-  @Test
-  fun testRuleFiltersReportable() =
-    PlanDefinition.Assert.that(
-        "plandefinition-RuleFilters-1.0.0",
-        "Reportable",
-        null,
-      )
-      .withData("/plan-definition/rule-filters/tests-Reportable-bundle.json")
-      .withLibrary("/plan-definition/rule-filters/RuleFilters-1.0.0-bundle.json")
-      .apply()
-      .isEqualsTo("/plan-definition/rule-filters/ReportableCarePlan.json")
+    @Test
+    fun testQuestionnairePrepopulate() {
+        val planDefinitionID = "prepopulate"
+        val patientID = "OPA-Patient1"
+        val parameters = parameters(stringPart("ClaimId", "OPA-Claim1"))
+        PlanDefinition.Assert.that(planDefinitionID, patientID, null, null)
+            .withParameters(parameters)
+            .withExpectedCarePlanId(IdType("CarePlan", "prepopulate"))
+            .apply()
+            .equalsToExpected()
+    }
 
-  @Test
-  fun testAncVisitContainedActivityDefinition() =
-    PlanDefinition.Assert.that("MedRequest-Example", "Patient/Patient-Example")
-      .withData("/plan-definition/med-request/med_request_patient.json")
-      .withLibrary("/plan-definition/med-request/med_request_plan_definition.json")
-      .apply()
-      .isEqualsTo("/plan-definition/med-request/med_request_careplan.json")
+    @Test
+    fun testQuestionnairePrepopulate_NoLibrary() {
+        val planDefinitionID = "prepopulate-noLibrary"
+        val patientID = "OPA-Patient1"
+        val parameters = parameters(stringPart("ClaimId", "OPA-Claim1"))
+        PlanDefinition.Assert.that(planDefinitionID, patientID, null, null)
+            .withParameters(parameters)
+            .apply()
+            .hasOperationOutcome()
+    }
+
+    @Test
+    fun testQuestionnaireResponse() {
+        val planDefinitionID = "prepopulate"
+        val patientID = "OPA-Patient1"
+        val dataId = IdType("QuestionnaireResponse", "OutpatientPriorAuthorizationRequest-OPA-Patient1")
+        val parameters = parameters(stringPart("ClaimId", "OPA-Claim1"))
+        PlanDefinition.Assert.that(planDefinitionID, patientID, null, null)
+            .withAdditionalDataId(dataId)
+            .withParameters(parameters)
+            .apply()
+            .hasContained(4)
+    }
+
+    @Test
+    fun testGenerateQuestionnaire() {
+        val planDefinitionID = "generate-questionnaire"
+        val patientID = "OPA-Patient1"
+        val parameters = parameters(stringPart("ClaimId", "OPA-Claim1"))
+        PlanDefinition.Assert.that(planDefinitionID, patientID, null, null)
+            .withParameters(parameters)
+            .withExpectedCarePlanId(IdType("CarePlan", "generate-questionnaire"))
+            .apply()
+            .equalsToExpected()
+    }
+
+    @Test
+    fun testASLPA1() {
+        val planDefinitionID = "ASLPA1"
+        val patientID = "positive"
+        val parameters = parameters(
+            stringPart("Service Request Id", "SleepStudy"),
+            stringPart("Service Request Id", "SleepStudy2"),
+            stringPart("Coverage Id", "Coverage-positive")
+        )
+        val repository = TestRepositoryFactory.createRepository(
+            fhirContext, this.javaClass, "/plandefinition/pa-aslp"
+        )
+        PlanDefinition.Assert.that(planDefinitionID, patientID, null, null)
+            .withParameters(parameters)
+            .withRepository(repository)
+            .applyR5()
+            .hasEntry(2)
+    }
+
+    @Test
+    fun testPackageASLPA1() {
+        val planDefinitionID = "ASLPA1"
+        val repository = TestRepositoryFactory.createRepository(
+            fhirContext, this.javaClass, "/plandefinition/pa-aslp"
+        )
+        PlanDefinition.Assert.that(planDefinitionID, null, null, null)
+            .withRepository(repository)
+            .packagePlanDefinition()
+            .hasEntry(20)
+    }
 }

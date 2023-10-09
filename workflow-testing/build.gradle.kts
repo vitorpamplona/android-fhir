@@ -28,6 +28,7 @@ dependencies {
   // compileOnly(Dependencies.Cql.engine)
   compileOnly(Dependencies.Cql.evaluator)
   compileOnly(Dependencies.Cql.evaluatorFhirJackson)
+  compileOnly(Dependencies.Cql.evaluatorFhirUtilities)
   compileOnly(project(":engine")) { exclude(module = "truth") }
 
   // Forces the most recent version of jackson, ignoring what dependencies use.
