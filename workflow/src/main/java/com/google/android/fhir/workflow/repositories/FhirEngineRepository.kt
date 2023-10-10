@@ -167,6 +167,7 @@ class FhirEngineRepository(
     returnType: Class<R>?,
     headers: MutableMap<String, String>?,
   ): R {
+    println("Engine Invoke 1 $name")
     TODO("Not yet implemented")
   }
 
@@ -175,6 +176,7 @@ class FhirEngineRepository(
     parameters: P,
     headers: MutableMap<String, String>?,
   ): MethodOutcome {
+    println("Engine 2 $name")
     TODO("Not yet implemented")
   }
 
@@ -185,6 +187,7 @@ class FhirEngineRepository(
     returnType: Class<R>?,
     headers: MutableMap<String, String>?,
   ): R {
+    println("Engine 3 $name")
     TODO("Not yet implemented")
   }
 
@@ -194,6 +197,7 @@ class FhirEngineRepository(
     parameters: P,
     headers: MutableMap<String, String>?,
   ): MethodOutcome {
+    println("Engine 4 $name")
     TODO("Not yet implemented")
   }
 
@@ -204,6 +208,7 @@ class FhirEngineRepository(
     returnType: Class<R>?,
     headers: MutableMap<String, String>?,
   ): R {
+    println("Engine 5 $name")
     TODO("Not yet implemented")
   }
 
@@ -213,6 +218,7 @@ class FhirEngineRepository(
     parameters: P,
     headers: MutableMap<String, String>?,
   ): MethodOutcome {
+    println("Engine 6 $name")
     TODO("Not yet implemented")
   }
 

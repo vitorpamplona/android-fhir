@@ -83,9 +83,9 @@ class FhirOperatorTest {
 
   @Test
   fun generateCarePlan() = runBlockingOnWorkerThread {
-    loadFile("/plan-definition/rule-filters/RuleFilters-1.0.0-bundle.json", ::importToFhirEngine)
-    loadFile("/plan-definition/rule-filters/tests-Reportable-bundle.json", ::importToFhirEngine)
-    loadFile("/plan-definition/rule-filters/tests-NotReportable-bundle.json", ::importToFhirEngine)
+    loadFile("/plan-definition/rule-filters/RuleFilters-1.0.0-bundle.json", ::installToIgManager)
+    loadFile("/plan-definition/rule-filters/tests-Reportable-bundle.json", ::installToIgManager)
+    loadFile("/plan-definition/rule-filters/tests-NotReportable-bundle.json", ::installToIgManager)
 
     loadFile("/first-contact/01-registration/patient-charity-otala-1.json", ::importToFhirEngine)
     loadFile(
@@ -145,6 +145,8 @@ class FhirOperatorTest {
         planDefinitionId = "Plan-Definition-Example",
         patientId = "Patient/Female-Patient-Example",
       )
+
+    println(jsonParser.setPrettyPrint(true).encodeResourceToString(carePlan))
 
     assertEquals(
       readResourceAsString("/plan-definition/cql-applicability-condition/care_plan.json"),
@@ -241,6 +243,8 @@ class FhirOperatorTest {
       )
 
     measureReport.date = null
+
+    println(jsonParser.setPrettyPrint(true).encodeResourceToString(measureReport))
 
     assertEquals(
       readResourceAsString("/first-contact/04-results/subject-report.json"),

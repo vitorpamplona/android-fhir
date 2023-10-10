@@ -17,8 +17,6 @@
 package com.google.android.fhir.workflow.testing
 
 import java.io.InputStream
-import java.net.URL
-
 
 open class Loadable {
   fun resolveName(name: String): String? {
@@ -34,8 +32,7 @@ open class Loadable {
       val baseName = c.name
       val index = baseName.lastIndexOf('.')
       if (index != -1) {
-        name = (baseName.substring(0, index).replace('.', '/')
-                + "/" + name)
+        name = (baseName.substring(0, index).replace('.', '/') + "/" + name)
       }
     } else {
       name = name.substring(1)
@@ -46,8 +43,7 @@ open class Loadable {
   fun listFiles(assetName: String): List<String> {
     val name = resolveName(assetName)
 
-    val list = javaClass.classLoader?.getResource(name)
-      ?: ClassLoader.getSystemResource(name)
+    val list = javaClass.classLoader?.getResource(name) ?: ClassLoader.getSystemResource(name)
 
     val retList = mutableListOf<String>()
     retList.addAll(load(list.openStream()).split("\n"))

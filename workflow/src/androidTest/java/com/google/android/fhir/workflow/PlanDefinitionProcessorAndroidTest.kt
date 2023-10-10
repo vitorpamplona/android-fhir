@@ -29,13 +29,14 @@ import org.opencds.cqf.fhir.utility.r4.Parameters
 @RunWith(AndroidJUnit4::class)
 class PlanDefinitionProcessorAndroidTest {
   private val fhirContext = FhirContext.forR4Cached()
+
   @Test
   fun testChildRoutineVisit() =
     PlanDefinition.Assert.that(
-      "ChildRoutineVisit-PlanDefinition-1.0.0",
-      "Patient/ChildRoutine-Reportable",
-      null,
-    )
+        "ChildRoutineVisit-PlanDefinition-1.0.0",
+        "Patient/ChildRoutine-Reportable",
+        null,
+      )
       .withData("/plan-definition/child-routine-visit/child_routine_visit_patient.json")
       .withContent("/plan-definition/child-routine-visit/child_routine_visit_plan_definition.json")
       .withTerminology(
@@ -61,19 +62,19 @@ class PlanDefinitionProcessorAndroidTest {
         "/plan-definition/anc-dak",
       )
     PlanDefinition.Assert.that(
-      "ANCDT17",
-      "Patient/5946f880-b197-400b-9caa-a3c661d23041",
-      "Encounter/helloworld-patient-1-encounter-1",
-      null,
-    )
+        "ANCDT17",
+        "Patient/5946f880-b197-400b-9caa-a3c661d23041",
+        "Encounter/helloworld-patient-1-encounter-1",
+        null,
+      )
       .withRepository(repository)
       .withParameters(
         Parameters.parameters(
           Parameters.part(
             "encounter",
-            "helloworld-patient-1-encounter-1"
-          )
-        )
+            "helloworld-patient-1-encounter-1",
+          ),
+        ),
       )
       .withExpectedCarePlanId(IdType("CarePlan", "ANCDT17"))
       .apply()
@@ -83,11 +84,11 @@ class PlanDefinitionProcessorAndroidTest {
   @Test
   fun testANCDT17WithElm() {
     PlanDefinition.Assert.that(
-      "ANCDT17",
-      "Patient/5946f880-b197-400b-9caa-a3c661d23041",
-      "Encounter/ANCDT17-encounter",
-      null,
-    )
+        "ANCDT17",
+        "Patient/5946f880-b197-400b-9caa-a3c661d23041",
+        "Encounter/ANCDT17-encounter",
+        null,
+      )
       .withData("/plan-definition/anc-dak/data-bundle.json")
       .withContent("/plan-definition/anc-dak/content-bundle.json")
       .withTerminology("/plan-definition/anc-dak/terminology-bundle.json")
@@ -112,10 +113,10 @@ class PlanDefinitionProcessorAndroidTest {
   @Test
   fun testHelloWorld() =
     PlanDefinition.Assert.that(
-      "hello-world-patient-view",
-      "helloworld-patient-1",
-      "helloworld-patient-1-encounter-1",
-    )
+        "hello-world-patient-view",
+        "helloworld-patient-1",
+        "helloworld-patient-1-encounter-1",
+      )
       .withRepositoryPath("/plan-definition/base-repo")
       .withExpectedCarePlanId(IdType("CarePlan", "hello-world-patient-view"))
       .apply()

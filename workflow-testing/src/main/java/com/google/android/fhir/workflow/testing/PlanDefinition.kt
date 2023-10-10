@@ -19,8 +19,8 @@ package com.google.android.fhir.workflow.testing
 import ca.uhn.fhir.context.FhirContext
 import ca.uhn.fhir.context.FhirVersionEnum
 import ca.uhn.fhir.rest.api.EncodingEnum
+import java.io.IOException
 import org.hl7.fhir.instance.model.api.IBaseResource
-import org.hl7.fhir.instance.model.api.IIdType
 import org.hl7.fhir.instance.model.api.IPrimitiveType
 import org.hl7.fhir.r4.model.Bundle
 import org.hl7.fhir.r4.model.CarePlan
@@ -39,14 +39,10 @@ import org.opencds.cqf.fhir.api.Repository
 import org.opencds.cqf.fhir.cql.EvaluationSettings
 import org.opencds.cqf.fhir.cql.LibraryEngine
 import org.opencds.cqf.fhir.cr.plandefinition.r4.PlanDefinitionProcessor
-import org.opencds.cqf.fhir.utility.repository.IGFileStructureRepository
 import org.opencds.cqf.fhir.utility.repository.IGLayoutMode
 import org.opencds.cqf.fhir.utility.repository.InMemoryFhirRepository
 import org.opencds.cqf.fhir.utility.repository.Repositories
 import org.skyscreamer.jsonassert.JSONAssert
-import java.io.FileInputStream
-import java.io.FileNotFoundException
-import java.io.IOException
 
 object PlanDefinition : Loadable() {
   private val fhirContext = FhirContext.forCached(FhirVersionEnum.R4)

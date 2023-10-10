@@ -54,7 +54,7 @@ internal constructor(
 
   private var dataRepo = FhirEngineRepository(fhirContext, fhirEngine)
   private var contentRepo = KnowledgeRepository(fhirContext, knowledgeManager)
-  private var terminologyRepo = FhirEngineRepository(fhirContext, fhirEngine)
+  private var terminologyRepo = KnowledgeRepository(fhirContext, knowledgeManager)
 
   private val repository = ProxyRepository(dataRepo, contentRepo, terminologyRepo)
   private val evaluationSettings: EvaluationSettings = EvaluationSettings.getDefault()
@@ -167,12 +167,14 @@ internal constructor(
   ): MeasureReport {
     val measure = Eithers.forLeft3<CanonicalType, IdType, Measure>(CanonicalType(measureUrl))
     return measureProcessor.evaluateMeasure(
-      measure,
-      start,
-      end,
-      reportType,
-      listOfNotNull(subjectId),
-      null,
+      /* measure = */ measure,
+      /* periodStart = */ start,
+      /* periodEnd = */ end,
+      /* reportType = */ reportType,
+      /* subjectIds = */ listOf(
+        subjectId,
+      ), // https://github.com/cqframework/clinical-reasoning/issues/358
+      /* additionalData = */ null,
     )
   }
 

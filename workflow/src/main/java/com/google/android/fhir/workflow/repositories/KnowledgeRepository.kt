@@ -42,12 +42,14 @@ class KnowledgeRepository(
     id: I,
     headers: MutableMap<String, String>?,
   ): T? = runBlockingOrThrowMainThreadException {
+    println("$resourceType ${id.baseUrl}/${id.resourceType}/${id.idPart}")
+
     val result =
       try {
         knowledgeManager
           .loadResources(
             resourceType = id.resourceType,
-            url = "${id.baseUrl}/${id.resourceType}/${id.idPart}",
+            id = id.idPart,
           )
           .single() as T?
       } catch (resourceNotFoundException: ResourceNotFoundException) {
@@ -107,6 +109,8 @@ class KnowledgeRepository(
     headers: MutableMap<String, String>?,
   ): B {
     return runBlockingOrThrowMainThreadException {
+      println("Knowledge Search = $resourceType $searchParameters")
+
       val builder = BundleBuilder(fhirContext)
       builder.setType("searchset")
 
@@ -174,6 +178,7 @@ class KnowledgeRepository(
     returnType: Class<R>?,
     headers: MutableMap<String, String>?,
   ): R {
+    println("Knowledge Invoke 1 $name")
     TODO("Not yet implemented")
   }
 
@@ -182,6 +187,7 @@ class KnowledgeRepository(
     parameters: P,
     headers: MutableMap<String, String>?,
   ): MethodOutcome {
+    println("Knowledge Invoke 2 $name")
     TODO("Not yet implemented")
   }
 
@@ -192,6 +198,7 @@ class KnowledgeRepository(
     returnType: Class<R>?,
     headers: MutableMap<String, String>?,
   ): R {
+    println("Knowledge Invoke 3 $name")
     TODO("Not yet implemented")
   }
 
@@ -201,6 +208,7 @@ class KnowledgeRepository(
     parameters: P,
     headers: MutableMap<String, String>?,
   ): MethodOutcome {
+    println("Knowledge Invoke 4 $name")
     TODO("Not yet implemented")
   }
 
@@ -211,6 +219,7 @@ class KnowledgeRepository(
     returnType: Class<R>?,
     headers: MutableMap<String, String>?,
   ): R {
+    println("Knowledge Invoke 5 $name")
     TODO("Not yet implemented")
   }
 
@@ -220,6 +229,7 @@ class KnowledgeRepository(
     parameters: P,
     headers: MutableMap<String, String>?,
   ): MethodOutcome {
+    println("Knowledge Invoke 6 $name")
     TODO("Not yet implemented")
   }
 

@@ -78,6 +78,7 @@ internal constructor(
     rootDirectory.listFiles()?.forEach { file ->
       try {
         val resource = jsonParser.parseResource(FileInputStream(file))
+        println("Importing Resource ${resource.idElement.idPart}")
         if (resource is Resource) {
           importResource(igId, resource, file)
         } else {
