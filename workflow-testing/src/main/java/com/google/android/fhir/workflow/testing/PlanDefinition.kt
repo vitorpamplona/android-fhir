@@ -20,6 +20,7 @@ import ca.uhn.fhir.context.FhirContext
 import ca.uhn.fhir.context.FhirVersionEnum
 import ca.uhn.fhir.rest.api.EncodingEnum
 import org.hl7.fhir.instance.model.api.IBaseResource
+import org.hl7.fhir.instance.model.api.IIdType
 import org.hl7.fhir.instance.model.api.IPrimitiveType
 import org.hl7.fhir.r4.model.Bundle
 import org.hl7.fhir.r4.model.CarePlan
@@ -43,12 +44,11 @@ import org.opencds.cqf.fhir.utility.repository.IGLayoutMode
 import org.opencds.cqf.fhir.utility.repository.InMemoryFhirRepository
 import org.opencds.cqf.fhir.utility.repository.Repositories
 import org.skyscreamer.jsonassert.JSONAssert
+import java.io.FileInputStream
+import java.io.FileNotFoundException
 import java.io.IOException
 
-
 object PlanDefinition : Loadable() {
-  const val REPO_PATH = "/plandefinition/repo"
-
   private val fhirContext = FhirContext.forCached(FhirVersionEnum.R4)
   private val jsonParser = fhirContext.newJsonParser()
   private val evaluationSettings = EvaluationSettings.getDefault()
@@ -64,8 +64,12 @@ object PlanDefinition : Loadable() {
   }
 
   object Assert {
-    fun that(planDefinitionID: String, patientID: String?, encounterID: String? = null, practitionerID: String? = null) =
-      Apply(planDefinitionID, patientID, encounterID, practitionerID)
+    fun that(
+      planDefinitionID: String,
+      patientID: String?,
+      encounterID: String? = null,
+      practitionerID: String? = null,
+    ) = Apply(planDefinitionID, patientID, encounterID, practitionerID)
   }
 
   class Apply(
@@ -102,9 +106,13 @@ object PlanDefinition : Loadable() {
 
     private fun loadAdditionalData(resource: IBaseResource) {
       additionalData =
-        if (resource.idElement.resourceType == Enumerations.FHIRAllTypes.BUNDLE.toCode()) resource as Bundle else Bundle()
-          .setType(Bundle.BundleType.COLLECTION)
-          .addEntry(Bundle.BundleEntryComponent().setResource(resource as Resource))
+        if (resource.idElement.resourceType == Enumerations.FHIRAllTypes.BUNDLE.toCode()) {
+          resource as Bundle
+        } else {
+          Bundle()
+            .setType(Bundle.BundleType.COLLECTION)
+            .addEntry(Bundle.BundleEntryComponent().setResource(resource as Resource))
+        }
     }
 
     fun withAdditionalData(dataAssetName: String): Apply {
@@ -144,11 +152,13 @@ object PlanDefinition : Loadable() {
     }
 
     private fun buildRepository(): Repository {
-      val local = IGFileStructureRepository(
-        fhirContext, repositoryPath,
-        IGLayoutMode.TYPE_PREFIX,
-        EncodingEnum.JSON
-      )
+      val local =
+        IGInputStreamStructureRepository(
+          fhirContext,
+          repositoryPath ?: ".",
+          IGLayoutMode.TYPE_PREFIX,
+          EncodingEnum.JSON,
+        )
       if (dataRepository == null && contentRepository == null && terminologyRepository == null) {
         return local
       }
@@ -169,26 +179,27 @@ object PlanDefinition : Loadable() {
 
       val libraryEngine = LibraryEngine(repository, evaluationSettings)
 
-      val expectedBundle = if (expectedBundleId != null) {
-        try {
-          repository.read(
-            Bundle::class.java, expectedBundleId
-          )
-        } catch (e: java.lang.Exception) {
+      val expectedBundle =
+        if (expectedBundleId != null) {
+          try {
+            repository.read(
+              Bundle::class.java,
+              expectedBundleId,
+            )
+          } catch (e: java.lang.Exception) {
+            null
+          }
+        } else {
           null
         }
-      } else {
-        null
-      }
 
       additionalDataId?.let {
-        loadAdditionalData(repository.read(
-          fhirContext
-            .getResourceDefinition(it.resourceType)
-            .newInstance()
-            .javaClass,
-          additionalDataId
-        ))
+        loadAdditionalData(
+          repository.read(
+            fhirContext.getResourceDefinition(it.resourceType).newInstance().javaClass,
+            additionalDataId,
+          ),
+        )
       }
 
       return GeneratedBundle(
@@ -210,42 +221,42 @@ object PlanDefinition : Loadable() {
             /* useServerData = */ null,
             /* bundle = */ additionalData,
             /* prefetchData = */ null,
-            /* libraryEngine = */ libraryEngine
+            /* libraryEngine = */ libraryEngine,
           ) as Bundle,
-        expectedBundle
+        expectedBundle,
       )
     }
-
 
     fun apply(): GeneratedCarePlan {
       val repository = overrideRepository ?: buildRepository()
 
       val libraryEngine = LibraryEngine(repository, evaluationSettings)
 
-      val expectedCarePlan = if (expectedCarePlanId != null) {
-        try {
-          repository.read(
-            CarePlan::class.java, expectedCarePlanId
-          )
-        } catch (e: java.lang.Exception) {
+      val expectedCarePlan =
+        if (expectedCarePlanId != null) {
+          try {
+            repository.read(
+              CarePlan::class.java,
+              expectedCarePlanId,
+            )
+          } catch (e: java.lang.Exception) {
+            null
+          }
+        } else {
           null
         }
-      } else {
-        null
-      }
 
       additionalDataId?.let {
-        loadAdditionalData(repository.read(
-          fhirContext
-            .getResourceDefinition(it.resourceType)
-            .newInstance()
-            .javaClass,
-          additionalDataId
-        ))
+        loadAdditionalData(
+          repository.read(
+            fhirContext.getResourceDefinition(it.resourceType).newInstance().javaClass,
+            additionalDataId,
+          ),
+        )
       }
 
       return GeneratedCarePlan(
-        (buildProcessor(repository!!)
+        (buildProcessor(repository)
           .apply<IPrimitiveType<String>>(
             IdType("PlanDefinition", planDefinitionID),
             null,
@@ -263,23 +274,23 @@ object PlanDefinition : Loadable() {
             null,
             additionalData,
             null,
-            libraryEngine
+            libraryEngine,
           ) as CarePlan),
-        expectedCarePlan
+        expectedCarePlan,
       )
     }
 
     fun packagePlanDefinition(): GeneratedPackage {
-      val repository = buildRepository()
+      val repository = overrideRepository ?: buildRepository()
       return GeneratedPackage(
         (buildProcessor(repository)
           .packagePlanDefinition<IPrimitiveType<String>>(
             IdType("PlanDefinition", planDefinitionID),
             null,
             null,
-            true
+            true,
           ) as Bundle),
-        null
+        null,
       )
     }
   }
@@ -288,7 +299,9 @@ object PlanDefinition : Loadable() {
     fun isEqualsTo(expectedBundleAssetName: String?) {
       try {
         JSONAssert.assertEquals(
-          load(expectedBundleAssetName!!), jsonParser.encodeResourceToString(generatedBundle), true
+          load(expectedBundleAssetName!!),
+          jsonParser.encodeResourceToString(generatedBundle),
+          true,
         )
       } catch (e: JSONException) {
         e.printStackTrace()
@@ -304,7 +317,7 @@ object PlanDefinition : Loadable() {
         JSONAssert.assertEquals(
           jsonParser.encodeResourceToString(expectedBundle),
           jsonParser.encodeResourceToString(generatedBundle),
-          true
+          true,
         )
       } catch (e: JSONException) {
         e.printStackTrace()
@@ -318,26 +331,28 @@ object PlanDefinition : Loadable() {
 
     fun hasCommunicationRequestPayload() {
       assertTrue(
-        generatedBundle.entry.stream()
+        generatedBundle.entry
+          .stream()
           .filter { e: Bundle.BundleEntryComponent ->
             e.resource.resourceType == ResourceType.CommunicationRequest
           }
           .map { e: Bundle.BundleEntryComponent -> e.resource as CommunicationRequest }
-          .allMatch { c -> c.hasPayload() }
+          .allMatch { c -> c.hasPayload() },
       )
     }
 
     fun hasQuestionnaireOperationOutcome() {
       assertTrue(
-        generatedBundle.entry.stream()
+        generatedBundle.entry
+          .stream()
           .map<Resource> { e: Bundle.BundleEntryComponent -> e.resource }
           .anyMatch { r: Resource ->
-            r.resourceType == ResourceType.Questionnaire && (r as Questionnaire).getContained()
-              .stream().anyMatch { c ->
-                c.getResourceType()
-                  .equals(ResourceType.OperationOutcome)
+            r.resourceType == ResourceType.Questionnaire &&
+              (r as Questionnaire).getContained().stream().anyMatch { c ->
+                c.getResourceType().equals(ResourceType.OperationOutcome)
               }
-          })
+          },
+      )
     }
   }
 
@@ -347,7 +362,7 @@ object PlanDefinition : Loadable() {
         JSONAssert.assertEquals(
           load(expectedCarePlanAssetName),
           jsonParser.encodeResourceToString(generatedCarePlan),
-          true
+          true,
         )
       } catch (e: JSONException) {
         e.printStackTrace()
@@ -360,10 +375,12 @@ object PlanDefinition : Loadable() {
 
     fun equalsToExpected() {
       try {
+        println(jsonParser.encodeResourceToString(generatedCarePlan))
+
         JSONAssert.assertEquals(
           jsonParser.encodeResourceToString(expectedCarePlan),
           jsonParser.encodeResourceToString(generatedCarePlan),
-          true
+          true,
         )
       } catch (e: JSONException) {
         e.printStackTrace()
@@ -376,8 +393,11 @@ object PlanDefinition : Loadable() {
     }
 
     fun hasOperationOutcome() {
-      assertTrue(generatedCarePlan.getContained().stream()
-        .anyMatch { r -> r.resourceType.equals(ResourceType.OperationOutcome) })
+      assertTrue(
+        generatedCarePlan.getContained().stream().anyMatch { r ->
+          r.resourceType.equals(ResourceType.OperationOutcome)
+        },
+      )
     }
   }
 

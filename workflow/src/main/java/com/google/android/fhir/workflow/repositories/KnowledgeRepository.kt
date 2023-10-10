@@ -111,29 +111,25 @@ class KnowledgeRepository(
       builder.setType("searchset")
 
       if (resourceType != null) {
-        val urls = searchParameters?.get("url")?.let { param ->
-          param.mapNotNull {
-            ((it as? UriParam)?.value ?: (it as? StringParam)?.value)
+        val urls =
+          searchParameters?.get("url")?.let { param ->
+            param.mapNotNull { ((it as? UriParam)?.value ?: (it as? StringParam)?.value) }
           }
-        }
 
-        val ids = searchParameters?.get("id")?.let { param ->
-          param.mapNotNull {
-            ((it as? UriParam)?.value ?: (it as? StringParam)?.value)
+        val ids =
+          searchParameters?.get("id")?.let { param ->
+            param.mapNotNull { ((it as? UriParam)?.value ?: (it as? StringParam)?.value) }
           }
-        }
 
-        val names = searchParameters?.get("name")?.let { param ->
-          param.mapNotNull {
-            ((it as? UriParam)?.value ?: (it as? StringParam)?.value)
+        val names =
+          searchParameters?.get("name")?.let { param ->
+            param.mapNotNull { ((it as? UriParam)?.value ?: (it as? StringParam)?.value) }
           }
-        }
 
-        val versions = searchParameters?.get("version")?.let { param ->
-          param.mapNotNull {
-            ((it as? UriParam)?.value ?: (it as? StringParam)?.value)
+        val versions =
+          searchParameters?.get("version")?.let { param ->
+            param.mapNotNull { ((it as? UriParam)?.value ?: (it as? StringParam)?.value) }
           }
-        }
 
         knowledgeManager
           .loadResources(

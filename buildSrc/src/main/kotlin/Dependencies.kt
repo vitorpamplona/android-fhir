@@ -37,7 +37,8 @@ object Dependencies {
     const val evaluator = "org.opencds.cqf.fhir:cqf-fhir-cr:${Versions.Cql.clinicalReasoning}"
     const val evaluatorFhirJackson =
       "org.opencds.cqf.fhir:cqf-fhir-jackson:${Versions.Cql.clinicalReasoning}"
-    const val evaluatorFhirUtilities = "org.opencds.cqf.fhir:cqf-fhir-utility:${Versions.Cql.clinicalReasoning}"
+    const val evaluatorFhirUtilities =
+      "org.opencds.cqf.fhir:cqf-fhir-utility:${Versions.Cql.clinicalReasoning}"
   }
 
   object Glide {
@@ -214,7 +215,7 @@ object Dependencies {
     }
 
     object Cql {
-      const val clinicalReasoning = "3.0.0-PRE8-SNAPSHOT"
+      const val clinicalReasoning = "3.0.0-PRE9-SNAPSHOT"
     }
 
     object Glide {

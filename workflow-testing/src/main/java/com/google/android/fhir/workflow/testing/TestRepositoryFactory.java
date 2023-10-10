@@ -12,20 +12,17 @@ public class TestRepositoryFactory {
         // intentionally empty
     }
 
-    public static Repository createRepository(FhirContext fhirContext, Class<?> clazz) {
-        return createRepository(fhirContext, clazz, "");
-    }
-
-    public static Repository createRepository(FhirContext fhirContext, Class<?> clazz, String path) {
-        return createRepository(fhirContext, clazz, path, IGLayoutMode.TYPE_PREFIX);
+    public static Repository createRepository(FhirContext fhirContext, String path) {
+        return createRepository(fhirContext, path, IGLayoutMode.TYPE_PREFIX);
     }
 
     public static Repository createRepository(
-            FhirContext fhirContext, Class<?> clazz, String path, IGLayoutMode layoutMode) {
-        return new IGFileStructureRepository(
-                fhirContext,
-                clazz.getProtectionDomain().getCodeSource().getLocation().getPath() + path,
-                layoutMode,
-                EncodingEnum.JSON);
+            FhirContext fhirContext, String path, IGLayoutMode layoutMode) {
+        return new IGInputStreamStructureRepository(
+            fhirContext,
+            path,
+            layoutMode,
+            EncodingEnum.JSON
+        );
     }
 }
